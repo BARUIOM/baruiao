@@ -5,6 +5,9 @@
 html {
     @apply w-full h-full;
     @apply select-none overflow-auto;
+
+    font-weight: 400;
+    font-family: "Roboto";
 }
 
 body {

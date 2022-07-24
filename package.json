@@ -9,6 +9,9 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@fontsource/material-icons": "^4.5.4",
+        "@fontsource/material-icons-outlined": "^4.5.4",
+        "@fontsource/roboto": "^4.5.7",
         "vue": "^3.2.37",
         "vue-router": "^4.0.13"
     },
