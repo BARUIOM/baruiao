@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
+
 import { Forms } from '@/components/forms';
+import { Baruio } from '@/modules/Baruio';
 
 const username = ref<string>('');
 const password = ref<string>('');
-</script>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({});
+const signIn = async () => {
+    return Baruio.signIn(username.value, password.value);
+};
 </script>
 
 <template>
@@ -20,7 +20,7 @@ export default defineComponent({});
             <Forms.TextField label="Username" v-model="username" />
             <Forms.TextField label="Password" type="password" v-model="password" />
 
-            <Forms.Button>Sign in</Forms.Button>
+            <Forms.Button @click.stop="signIn">Sign in</Forms.Button>
         </div>
     </main>
 </template>

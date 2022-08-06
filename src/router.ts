@@ -4,12 +4,19 @@ import type { RouteRecordRaw } from 'vue-router';
 import Home from '@/views/Home.vue';
 import Login from '@/views/Login.vue';
 
+import { Baruio } from '@/modules/Baruio';
+
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
         component: Home,
-        beforeEnter: (to, from, next) => {
-            next({ name: 'login' });
+        beforeEnter: async (to, from, next) => {
+            const isAuthenticated = await Baruio.authenticate();
+
+            if (!isAuthenticated)
+                return next({ name: 'login' });
+
+            return next();
         },
         children: [],
     },
