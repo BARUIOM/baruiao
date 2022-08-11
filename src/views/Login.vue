@@ -1,14 +1,25 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { Forms } from '@/components/forms';
 import { Baruio } from '@/modules/Baruio';
+
+const router = useRouter();
 
 const username = ref<string>('');
 const password = ref<string>('');
 
 const signIn = async () => {
-    return Baruio.signIn(username.value, password.value);
+    const provider = 'spotify';
+
+    return Baruio.signIn(username.value, password.value)
+        .then(() =>
+            router.replace({
+                name: 'oauth',
+                params: { provider }
+            })
+        );
 };
 </script>
 
