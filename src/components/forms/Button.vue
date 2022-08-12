@@ -1,23 +1,15 @@
 <script lang="ts" setup>
+import { computed } from 'vue';
+
 type Props = {
     color?: 'primary' | string;
 };
 
-withDefaults(defineProps<Props>(), {
+const { color } = withDefaults(defineProps<Props>(), {
     color: 'primary'
 });
-</script>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-    computed: {
-        primary() {
-            return this.color === 'primary';
-        },
-    },
-});
+const primary = computed<boolean>(() => color === 'primary');
 </script>
 
 <template>

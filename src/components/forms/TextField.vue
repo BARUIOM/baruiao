@@ -11,23 +11,17 @@ withDefaults(defineProps<Props>(), {
     type: 'text',
     rounded: false,
 });
-</script>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+const emit = defineEmits(['update:modelValue']);
 
-export default defineComponent({
-    methods: {
-        input(e: Event) {
-            const event = <InputEvent>(e);
+const input = (e: Event) => {
+    const event = e as InputEvent;
 
-            if (event.target) {
-                const { value } = <HTMLInputElement>(event.target);
-                this.$emit('update:modelValue', value);
-            }
-        }
+    if (event.target) {
+        const { value } = event.target as HTMLInputElement;
+        emit('update:modelValue', value);
     }
-});
+};
 </script>
 
 <template>
