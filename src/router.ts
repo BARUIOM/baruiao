@@ -6,6 +6,7 @@ import Login from '@/views/Login.vue';
 import OAuth from '@/views/OAuth.vue';
 
 import { Baruio } from '@/modules/Baruio';
+import { Spotify } from '@/modules/Spotify';
 
 const routes: RouteRecordRaw[] = [
     {
@@ -17,6 +18,14 @@ const routes: RouteRecordRaw[] = [
 
             if (!isAuthenticated)
                 return next({ name: 'login' });
+
+            const isSpotifyConnected = await Spotify.auth.validate();
+
+            if (!isSpotifyConnected) {
+                const provider = 'spotify';
+
+                return next({ name: 'oauth', params: { provider } });
+            }
 
             return next();
         },

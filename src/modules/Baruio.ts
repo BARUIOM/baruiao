@@ -21,6 +21,27 @@ const axios = Axios.create({
     validateStatus: () => true,
 });
 
+axios.interceptors.response.use((response) => {
+    if (response.status === 403) {
+        return Baruio.auth.refresh()
+            .then(() => Baruio.auth.getCredentials())
+            .then(credentials => {
+                if (!credentials)
+                    throw new Error("Unable to refresh user's access token");
+
+                if (!response.config.headers)
+                    response.config.headers = {};
+
+                const { accessToken } = credentials;
+                response.config.headers['Authorization'] = `Bearer ${accessToken}`;
+
+                return Axios.request(response.config);
+            });
+    }
+
+    return response;
+});
+
 const validator: TokenValidatorFunction = async (accessToken: string) => {
     const response = await axios.get('/me', {
         headers: {
