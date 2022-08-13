@@ -25,6 +25,7 @@ main {
 
     >div.content {
         @apply h-full p-2;
+        @apply overflow-y-auto;
     }
 }
 </style>

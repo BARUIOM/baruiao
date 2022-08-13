@@ -4,12 +4,14 @@
 
 html {
     @apply w-full h-full;
-    @apply select-none overflow-auto;
+    @apply select-none;
 
     font-weight: 400;
     font-family: "Roboto";
 }
 
 body {
-    @apply bg-[#0a0a0a] text-white w-[inherit] h-[inherit];
+    @apply w-[inherit] h-[inherit];
+    @apply bg-[#0a0a0a] text-white;
+    @apply overflow-hidden;
 }
