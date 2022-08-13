@@ -50,10 +50,10 @@ const toggleState = () =>
 <template>
     <div class="player" v-if="currentTrack">
         <div>
-            <img :src="currentTrack.album.images[0].url" />
+            <img :src="currentTrack.album.images[1].url" />
             <div>
                 <div>{{ currentTrack.name }}</div>
-                <div class="text-sm text-white/40">{{ currentTrack.artists[0].name }}</div>
+                <div class="text-sm text-neutral-400">{{ currentTrack.artists[0].name }}</div>
             </div>
         </div>
         <div>
