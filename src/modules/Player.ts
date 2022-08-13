@@ -26,7 +26,16 @@ axios.interceptors.request.use(async config => {
 });
 
 const audio = new Audio();
+const _playerState = ref<Player.State>(0);
 const _currentTime = ref<number>(0);
+
+audio.onpause = () => {
+    _playerState.value = Player.State.PAUSED;
+};
+
+audio.onplay = () => {
+    _playerState.value = Player.State.PLAYING;
+};
 
 audio.ontimeupdate = () => {
     _currentTime.value = audio.currentTime;
@@ -39,12 +48,41 @@ const props = {
     set currentTime(value: number) {
         audio.currentTime = value;
     },
+    get playerState(): Player.State {
+        return unref(_playerState);
+    },
+    set playerState(value: Player.State) {
+        if (value === Player.State.PAUSED)
+            audio.pause();
+        if (value === Player.State.PLAYING)
+            audio.play();
+    },
 };
 
 export const currentTrack = ref<SpotifyApi.TrackObjectFull>();
 export const currentTime = toRef(props, 'currentTime');
 
-export namespace Player {
+export const playerState = toRef(props, 'playerState');
+export const repeatState = ref<Player.RepeatState>(0);
+export const shuffleState = ref<Player.ShuffleState>(0);
+
+namespace Player {
+
+    export enum State {
+        PAUSED = 0,
+        PLAYING = 1,
+    }
+
+    export enum RepeatState {
+        REPEAT_OFF = 0,
+        REPEAT_ALL = 1,
+        REPEAT_ONCE = 2,
+    }
+
+    export enum ShuffleState {
+        SHUFFLE_OFF = 0,
+        SHUFFLE_ON = 1,
+    }
 
     export async function load(track: SpotifyApi.TrackObjectFull) {
         const response = await axios.get(`/play/${track.id}`);
@@ -65,3 +103,5 @@ export namespace Player {
     }
 
 }
+
+export default Player;
