@@ -31,7 +31,7 @@ const signIn = async () => {
             <Forms.TextField label="Username" v-model="username" />
             <Forms.TextField label="Password" type="password" v-model="password" />
 
-            <Forms.Button @click.stop="signIn">Sign in</Forms.Button>
+            <Forms.Button @click.stop="signIn" block>Sign in</Forms.Button>
         </div>
     </main>
 </template>
