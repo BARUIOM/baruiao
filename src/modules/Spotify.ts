@@ -1,4 +1,5 @@
 import Axios from 'axios';
+import { ref } from 'vue';
 
 import {
     AuthStore,
@@ -10,6 +11,22 @@ import { Baruio } from './Baruio';
 const axios = Axios.create({
     baseURL: 'https://api.spotify.com/v1',
     validateStatus: () => true,
+});
+
+axios.interceptors.request.use((config) => {
+    if (!config.headers)
+        config.headers = {};
+
+    if (!config.headers['Authorization']) {
+        const credentials = Spotify.auth.getCredentials();
+
+        if (credentials) {
+            const { accessToken } = credentials;
+            config.headers['Authorization'] = `Bearer ${accessToken}`;
+        }
+    }
+
+    return config;
 });
 
 axios.interceptors.response.use((response) => {
