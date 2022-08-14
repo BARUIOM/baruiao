@@ -28,12 +28,13 @@ div.track-list-item {
     @apply cursor-pointer rounded;
 
     &:hover {
-        @apply bg-white/10;
+        @apply bg-neutral-800;
     }
 
     >img:nth-child(1) {
         @apply w-10 h-10 mx-4;
         @apply object-cover object-center;
+        @apply pointer-events-none;
     }
 
     >div:nth-child(3) {
