@@ -19,7 +19,7 @@ main {
 
     >div.header {
         @apply h-16 min-h-[4rem];
-        @apply border-b border-white/10;
+        @apply border-b border-neutral-800;
         @apply bg-[#181818];
     }
 

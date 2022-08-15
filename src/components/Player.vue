@@ -78,7 +78,7 @@ const toggleState = () =>
 div.player {
     @apply flex;
     @apply h-24 min-h-[6rem] p-4;
-    @apply border-t border-white/10;
+    @apply border-t border-neutral-800;
     @apply bg-[#181818];
 
     >div:nth-child(1) {
