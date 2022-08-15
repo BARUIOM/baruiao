@@ -25,7 +25,7 @@ const onclick = () =>
 
 <template>
     <div class="card" @click.stop="onclick">
-        <img :src="cover" />
+        <div :style="{ backgroundImage: `url(${cover})` }" />
         <div>
             <div>{{ title }}</div>
             <section>
@@ -49,12 +49,12 @@ div.card {
         @apply bg-neutral-800;
     }
 
-    >img {
-        @apply object-cover object-center;
-        @apply pointer-events-none shadow-md;
+    >div:nth-child(1) {
+        @apply bg-cover bg-center;
+        @apply pb-[100%] shadow-md;
     }
 
-    >div {
+    >div:nth-child(2) {
         @apply min-h-[64px] space-y-1;
 
         >div {
