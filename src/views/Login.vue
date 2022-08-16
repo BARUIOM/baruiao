@@ -48,19 +48,19 @@ main {
         @apply p-4 space-y-4;
         @apply bg-neutral-900 rounded;
 
-        @media screen(sm) {
+        @screen sm {
             @apply w-1/2;
         }
 
-        @media screen(md) {
+        @screen md {
             @apply w-1/3;
         }
 
-        @media screen(xl) {
+        @screen xl {
             @apply w-1/4;
         }
 
-        @media screen(2xl) {
+        @screen 2xl {
             @apply w-1/6;
         }
     }

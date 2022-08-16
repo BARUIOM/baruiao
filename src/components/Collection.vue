@@ -34,19 +34,19 @@ div.collection {
     >div {
         @apply w-1/2 min-w-[theme(width.1/2)] p-2;
 
-        @media screen(sm) {
+        @screen sm {
             @apply w-1/4 min-w-[theme(width.1/4)];
         }
 
-        @media screen(lg) {
+        @screen lg {
             @apply w-1/6 min-w-[theme(width.1/6)];
         }
 
-        @media screen(xl) {
+        @screen xl {
             @apply w-1/8 min-w-[theme(width.1/8)];
         }
 
-        @media screen(2xl) {
+        @screen 2xl {
             @apply w-1/12 min-w-[theme(width.1/12)];
         }
     }
