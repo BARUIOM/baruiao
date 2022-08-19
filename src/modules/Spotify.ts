@@ -1,4 +1,4 @@
-import Axios from 'axios';
+import Axios, { AxiosRequestConfig } from 'axios';
 import { ref, Ref, unref } from 'vue';
 
 import {
@@ -50,6 +50,20 @@ axios.interceptors.response.use((response) => {
     return response;
 });
 
+const request = async <T>(options: AxiosRequestConfig = {}, next?: string): Promise<T> => {
+    if (next) {
+        options.method = 'GET';
+        options.url = next;
+    }
+
+    const response = await axios.request<T>(options);
+
+    if (response.status === 200)
+        return response.data;
+
+    return {} as T;
+};
+
 const validator: TokenValidatorFunction = async (accessToken: string) => {
     const response = await axios.get<SpotifyApi.UserProfileResponse>('/me', {
         headers: {
@@ -70,7 +84,13 @@ type Pageable<T> = {
     next: string | null;
 };
 
-class Collection<T> {
+type PageableRequestOptions = {
+    limit?: number;
+    offset?: number;
+    next?: string;
+};
+
+export class Collection<T> {
 
     private readonly ref = ref<T[]>([]) as Ref<T[]>;
     private readonly loaded = ref<boolean>(false);
@@ -78,7 +98,7 @@ class Collection<T> {
     private _next: string | null = null;
 
     constructor(
-        private readonly callback: () => Promise<Pageable<T>>
+        private readonly fetch: (options?: PageableRequestOptions) => Promise<Pageable<T>>
     ) { }
 
     get items(): T[] {
@@ -89,32 +109,30 @@ class Collection<T> {
         if (this.loaded.value)
             return;
 
-        await Promise.resolve(this.callback())
+        return this.fetch()
             .then(({ items, next }) => {
                 this.ref.value = items;
                 this._next = next;
             })
-            .then(() =>
-                this.loaded.value = true
-            );
+            .finally(() => {
+                this.loaded.value = true;
+            });
     }
 
     public async next(): Promise<boolean> {
-        if (!this._next)
+        const next = this._next;
+
+        if (!next)
             return false;
 
-        const response = await axios.get<SpotifyApi.PagingObject<T>>(this._next);
+        return this.fetch({ next })
+            .then(({ items, next }) => {
+                this.ref.value = [...this.ref.value, ...items];
+                this._next = next;
 
-        if (response.status === 200) {
-            const { items, next } = response.data;
-
-            this.ref.value = [...this.ref.value, ...items];
-            this._next = next;
-
-            return !!next;
-        }
-
-        return false;
+                return !!next;
+            })
+            .catch(() => false);
     }
 
 }
@@ -123,63 +141,64 @@ export namespace Spotify {
 
     export const auth = new AuthStore('spotify', validator, refresher);
 
-    export async function getSavedAlbums(limit: number = 20, offset: number = 0)
+    export async function getSavedAlbums({ limit = 20, offset = 0, next: _next }: PageableRequestOptions = {})
         : Promise<Pageable<SpotifyApi.SavedAlbumObject>> {
-        const response = await axios.get<SpotifyApi.UsersSavedAlbumsResponse>('/me/albums', {
+        const data = await request<SpotifyApi.UsersSavedAlbumsResponse>({
+            method: 'GET',
+            url: '/me/albums',
             params: { limit, offset },
-        });
+        }, _next);
 
-        if (response.status === 200) {
-            const { items, next } = response.data;
+        const { items = [], next = null } = data;
 
-            return { items, next };
-        }
-
-        return { items: [], next: null };
+        return { items, next };
     }
 
-    export async function getSavedTracks(limit: number = 20, offset: number = 0)
+    export async function getSavedTracks({ limit = 20, offset = 0, next: _next }: PageableRequestOptions = {})
         : Promise<Pageable<SpotifyApi.SavedTrackObject>> {
-        const response = await axios.get<SpotifyApi.UsersSavedTracksResponse>('/me/tracks', {
+        const data = await request<SpotifyApi.UsersSavedTracksResponse>({
+            method: 'GET',
+            url: '/me/tracks',
             params: { limit, offset },
-        });
+        }, _next);
 
-        if (response.status === 200) {
-            const { items, next } = response.data;
+        const { items = [], next = null } = data;
 
-            return { items, next };
-        }
-
-        return { items: [], next: null };
+        return { items, next };
     }
 
-    export async function getSavedArtists(limit: number = 20) {
-        const response = await axios.get<SpotifyApi.UsersFollowedArtistsResponse>('/me/following', {
+    export async function getSavedArtists({ limit = 20, next: _next }: PageableRequestOptions = {})
+        : Promise<Pageable<SpotifyApi.ArtistObjectFull>> {
+        const data = await request<SpotifyApi.UsersFollowedArtistsResponse>({
+            method: 'GET',
+            url: '/me/following',
             params: { limit, type: 'artist' },
-        });
+        }, _next);
 
-        if (response.status === 200) {
-            const { artists } = response.data;
-            const { items, next } = artists;
+        const { artists = {} as typeof data['artists'] } = data;
+        const { items = [], next = null } = artists;
 
-            return { items, next };
-        }
-
-        return { items: [], next: null };
+        return { items, next };
     }
 
-    export async function getSavedPlaylists(limit: number = 20, offset: number = 0) {
-        const response = await axios.get<SpotifyApi.ListOfCurrentUsersPlaylistsResponse>('/me/playlists', {
+    export async function getSavedPlaylists({ limit = 20, offset = 0, next: _next }: PageableRequestOptions = {})
+        : Promise<Pageable<SpotifyApi.PlaylistObjectSimplified>> {
+        const data = await request<SpotifyApi.ListOfCurrentUsersPlaylistsResponse>({
+            method: 'GET',
+            url: '/me/playlists',
             params: { limit, offset },
         });
 
-        if (response.status === 200) {
-            const { items, next } = response.data;
+        const { items = [], next = null } = data;
 
-            return { items, next };
-        }
+        return { items, next };
+    }
 
-        return { items: [], next: null };
+    export function getPlaylist(playlistId: string) {
+        return request<SpotifyApi.SinglePlaylistResponse>({
+            method: 'GET',
+            url: '/playlists/' + playlistId,
+        });
     }
 
 }
