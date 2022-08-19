@@ -29,7 +29,33 @@ const routes: RouteRecordRaw[] = [
 
             return next();
         },
-        children: [],
+        children: [
+            {
+                path: '',
+                name: 'userLibrary',
+                component: () => import('@/views/UserLibrary.vue'),
+            },
+            {
+                path: 'collection/albums',
+                name: 'albumCollection',
+                component: () => import('@/views/collection/Albums.vue'),
+            },
+            {
+                path: 'collection/artists',
+                name: 'artistCollection',
+                component: () => import('@/views/collection/Artists.vue'),
+            },
+            {
+                path: 'collection/playlists',
+                name: 'playlistCollection',
+                component: () => import('@/views/collection/Playlists.vue'),
+            },
+            {
+                path: 'collection/tracks',
+                name: 'trackCollection',
+                component: () => import('@/views/collection/Tracks.vue'),
+            },
+        ],
     },
     {
         name: 'login',
