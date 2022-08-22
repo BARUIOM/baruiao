@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { Forms } from '@/components/forms';
 
+import { toHyperLinkData } from '@/modules/DataTypes';
 import Player, {
     currentTime,
     currentTrack,
@@ -8,6 +9,8 @@ import Player, {
     repeatState,
     shuffleState,
 } from '@/modules/Player';
+
+import HyperLinkGroup from './HyperLinkGroup.vue';
 
 const REPEAT_BUTTON_ICON = {
     [Player.RepeatState.REPEAT_OFF]: 'repeat',
@@ -53,7 +56,7 @@ const toggleState = () =>
             <img :src="currentTrack.album.images[1].url" />
             <div>
                 <div>{{ currentTrack.name }}</div>
-                <div class="text-sm text-neutral-400">{{ currentTrack.artists[0].name }}</div>
+                <HyperLinkGroup class="text-sm" :data="currentTrack.artists.map(toHyperLinkData)" />
             </div>
         </div>
         <div>

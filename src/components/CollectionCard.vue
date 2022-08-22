@@ -1,16 +1,14 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router';
 
-export type CardMeta = {
-    name: string;
-    href?: string;
-};
+import type { MaybeHyperLink } from '@/modules/DataTypes';
+import HyperLinkGroup from './HyperLinkGroup.vue';
 
 export type CardData = {
     title: string;
     cover: string;
     href: string;
-    metadata?: CardMeta[];
+    metadata?: MaybeHyperLink[];
 };
 
 const { href } = withDefaults(defineProps<CardData>(), {
@@ -28,12 +26,11 @@ const onclick = () =>
         <div :style="{ backgroundImage: `url(${cover})` }" />
         <div>
             <div>{{ title }}</div>
-            <section>
-                <template v-for="meta in metadata">
-                    <router-link v-if="meta.href" :to="meta.href" @click.stop>{{ meta.name }}</router-link>
-                    <span v-else>{{ meta.name }}</span>
+            <HyperLinkGroup class="text-sm truncate" :data="metadata">
+                <template v-slot:fallback="{ name }">
+                    <span>{{ name }}</span>
                 </template>
-            </section>
+            </HyperLinkGroup>
         </div>
     </div>
 </template>
@@ -59,21 +56,6 @@ div.card {
 
         >div {
             @apply truncate font-bold;
-        }
-
-        >section {
-            @apply text-sm text-neutral-400 truncate;
-
-            >a:hover {
-                @apply text-white underline;
-            }
-
-            :nth-child(n+2)::before {
-                @apply inline-block mr-1;
-                @apply text-sm text-neutral-400;
-
-                content: ',';
-            }
         }
     }
 }

@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import { toHyperLinkData } from '@/modules/DataTypes';
+import HyperLinkGroup from './HyperLinkGroup.vue';
+
 type Props = {
     track: SpotifyApi.TrackObjectFull;
 };
@@ -11,9 +14,7 @@ defineProps<Props>();
         <img :src="track.album.images[1].url" />
         <div>
             <div>{{ track.name }}</div>
-            <div class="text-sm text-neutral-400">
-                {{ track.artists.map((e) => e.name).join(", ") }}
-            </div>
+            <HyperLinkGroup class="text-sm" :data="track.artists.map(toHyperLinkData)" />
         </div>
         <div>
             <i class="material-icons">more_horiz</i>

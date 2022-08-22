@@ -2,7 +2,7 @@
 import { nextTick, onMounted } from 'vue';
 
 import { useSpotify } from '@/modules/Spotify';
-import { toCardData } from '@/modules/Mappings';
+import { toCardData } from '@/modules/DataTypes';
 
 import Collection from '@/components/Collection.vue';
 import SectionTitle from '@/components/SectionTitle.vue';
