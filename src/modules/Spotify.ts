@@ -52,8 +52,10 @@ axios.interceptors.response.use((response) => {
 
 const request = async <T>(options: AxiosRequestConfig = {}, next?: string): Promise<T> => {
     if (next) {
-        options.method = 'GET';
-        options.url = next;
+        options = {
+            method: 'GET',
+            url: next,
+        };
     }
 
     const response = await axios.request<T>(options);
@@ -194,11 +196,31 @@ export namespace Spotify {
         return { items, next };
     }
 
-    export function getPlaylist(playlistId: string) {
-        return request<SpotifyApi.SinglePlaylistResponse>({
+    export async function getPlaylist(playlistId: string) {
+        const data = await request<SpotifyApi.SinglePlaylistResponse>({
             method: 'GET',
             url: '/playlists/' + playlistId,
         });
+
+        if ('tracks' in data)
+            return data;
+
+        return null;
+    }
+
+    export async function getPlaylistTracks(
+        playlistId: string,
+        { limit = 20, offset = 0, next: _next }: PageableRequestOptions = {}
+    ): Promise<Pageable<SpotifyApi.PlaylistTrackObject>> {
+        const data = await request<SpotifyApi.PlaylistTrackResponse>({
+            method: 'GET',
+            url: '/playlists/' + playlistId + '/tracks',
+            params: { limit, offset },
+        }, _next);
+
+        const { items = [], next = null } = data;
+
+        return { items, next };
     }
 
 }
